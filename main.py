@@ -29,6 +29,9 @@ def decode_mime(value):
             text += part
     return text
 
+test = "=?UTF-8?B?SmFuw6EgSmlibGU=?="
+print(decode_header(test))
+
 def contains_any(text, words):
     t = text.lower()
     return any(w.lower() in t for w in words)
