@@ -29,23 +29,23 @@ def decode_mime(value):
             text += part
     return text
 
-test = "=?UTF-8?B?SmFuw6EgSmlibGU=?="
-print(decode_header(test))
-
 def contains_any(text, words):
     t = text.lower()
-    return any(w.lower() in t for w in words)
+
+    for w in words:
+        if w.lower() in t:
+            return True
+
+    return False
 
 def classify(sender, subject):
     s = sender.lower()
     sub = subject.lower()
 
-    if any(dom in s for dom in SCHOOL_DOMAINS):
+    if contains_any(s, SCHOOL_DOMAINS):
         return "SCHOOL"
-
     if contains_any(s, JOB_KEYWORDS) or contains_any(sub, JOB_KEYWORDS):
         return "JOBS"
-
     if contains_any(s, SPAM_SENDERS) or contains_any(sub, SPAM_KEYWORDS):
         return "SPAM"
 
