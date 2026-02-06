@@ -9,7 +9,7 @@ load_dotenv()
 EMAIL = os.getenv("SEZNAM_EMAIL")
 PASSWORD = os.getenv("SEZNAM_PASSWORD")
 
-# ===== NASTAV SI PODLE SEBE =====
+# ===== moje veci co cchci mazat =====
 SCHOOL_DOMAINS = ["@skola.cz", "@osu.cz", "@vsb.cz"]
 JOB_KEYWORDS = ["práce", "pozice", "junior", "recruiter", "pohovor", "jobs.cz", "prace.cz", "linkedin"]
 SPAM_KEYWORDS = ["sleva", "akce", "výprodej", "%", "promo", "newsletter", "dárek"]
@@ -17,6 +17,7 @@ SPAM_SENDERS = ["no-reply", "noreply", "newsletter", "marketing", "promo"]
 LIMIT = 5
 # =================================
 
+#prevede to na text, kvuli bytum
 def decode_mime(value):
     if not value:
         return ""
@@ -51,7 +52,7 @@ def classify(sender, subject):
 
     return "OTHER"
 
-# ====== VÝBĚR OD UŽIVATELE ======
+
 print("Co chceš vypsat?")
 print("1 - SPAM")
 print("2 - PRÁCE")
@@ -83,6 +84,8 @@ ids = messages[0].split()
 print(f"\n--- Výpis: {selected} (max {LIMIT}) ---\n")
 
 count = 0
+to_delete = []
+
 
 for msg_id in reversed(ids):
     if count >= LIMIT:
@@ -104,6 +107,18 @@ for msg_id in reversed(ids):
     print(f"   Od: {sender}")
     print(f"   Předmět: {subject}")
     print("-" * 50)
+
+    to_delete.append(msg_id)
+
+if to_delete:
+    potvrdit  = input(f"\nChceš smazat {len(to_delete)} vypsaných emailů? napiš SMAZAT: ").strip()
+    if potvrdit  == "SMAZAT":
+        for msg_id in to_delete:
+            mail.store(msg_id, "+FLAGS", r"(\Deleted)")
+        mail.expunge()
+        print("uspesne smazano ")
+
+
 
 mail.logout()
 
